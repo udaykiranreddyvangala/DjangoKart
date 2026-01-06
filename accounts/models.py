@@ -1,7 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User,AbstractBaseUser,BaseUserManager
-
-
+from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 
 # Create your models here.
 
@@ -22,7 +20,7 @@ class MyAccountManager(BaseUserManager):
         )
 
         user.set_password(password)
-        user.save(using=self. db)
+        user.save(using=self._db)
         return user
 
 
