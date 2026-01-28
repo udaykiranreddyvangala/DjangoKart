@@ -18,62 +18,52 @@
                 </aside>
                 <main class="col-md-6 border-left">
                     <article class="content-body">
+                        <form action="{% url 'add_cart' product.id%}" method="post">
+                            {% csrf_token %}
+                            <h2 class="title">{{product.product_name}}</h2>
 
-                        <h2 class="title">{{product.product_name}}</h2>
-
-                        <div class="mb-3">
-                            <var class="price h4">${{product.price}}</var>
-                        </div>
-
-                        <p>{{product.description}}</p>
-
-
-                        <hr>
-                        <div class="row">
-                            <div class="item-option-select">
-                                <h6>Choose Color</h6>
-                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> Silver
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> Gray
-                                    </label>
-                                    <label class="btn btn-light active">
-                                        <input type="radio" name="radio_color checked"> Gold
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> Black
-                                    </label>
-                                </div>
+                            <div class="mb-3">
+                                <var class="price h4">${{product.price}}</var>
                             </div>
-                        </div> <!-- row.// -->
-                        <div class="row">
-                            <div class="item-option-select">
-                                <h6>Select Size</h6>
-                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> S
-                                    </label>
-                                    <label class="btn btn-light active">
-                                        <input type="radio" name="radio_color" checked> M
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> L
-                                    </label>
-                                    <label class="btn btn-light">
-                                        <input type="radio" name="radio_color"> XL
-                                    </label>
+
+                            <p>{{product.description}}</p>
+
+
+                            <hr>
+                            <div class="row">
+                                <div class="item-option-select">
+                                    <label for="color">Color:</label>
+                                    <select name="color" id="color" class="form-control" required>
+                                        <option value="red" disabled selected>Choose Color</option>
+                                        {% for variation in product.variations.colors%}
+                                        <option value="{{variation.variation_value | lower}}">
+                                            {{variation.variation_value | capfirst}}</option>
+                                        {%endfor%}
+                                    </select>
                                 </div>
-                            </div>
-                        </div> <!-- row.// -->
-                        <hr>
-                        {% if product.is_available%}
-                        <a href="./product-detail.html" class="btn  btn-primary"> <span class="text">Add to cart</span>
-                            <i class="fas fa-shopping-cart"></i> </a>
-                        {%else%}
-                        <h5 class="text-danger">Out of Stock</h5>
-                        {%endif%}
+                            </div> <!-- row.// -->
+                            <div class="row">
+                                <div class="item-option-select">
+                                    <label for="size">Size:</label>
+                                    <select name="size" id="size" class="form-control" required>
+                                        <option value="red" disabled selected>Choose Size</option>
+                                        {% for variation in product.variations.sizes%}
+                                        <option value="{{variation.variation_value | lower}}">
+                                            {{variation.variation_value | capfirst}}</option>
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div> <!-- row.// -->
+
+                            <hr>
+                            {% if product.is_available%}
+                            <button class="btn btn-primary"> <span class="text">Add to
+                                    cart</span>
+                                <i class="fas fa-shopping-cart"></i> </button>
+                            {%else%}
+                            <h5 class="text-danger">Out of Stock</h5>
+                            {%endif%}
+                        </form>
                     </article> <!-- product-info-aside .// -->
                 </main> <!-- col.// -->
             </div> <!-- row.// -->

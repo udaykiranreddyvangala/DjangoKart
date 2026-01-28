@@ -57,11 +57,9 @@
 					<a href="{% url 'store'%}" class="btn btn-outline-primary">Store</a>
 					<!-- Search -->
 					<div class="col-lg  col-md-6 col-sm-12 col">
-						<form action="#" method="GET" class="search">
+						<form action="{% url 'search'%}" method="GET" class="search">
 							<div class="input-group w-100">
-								<input type="text" class="form-control" style="width:60%;" placeholder="Search"
-									name="keyword">
-
+								<input type="text" class="form-control" style="width:60%;" placeholder="Search" name="keyword">
 								<div class="input-group-append">
 									<button class="btn btn-primary" type="submit">
 										<i class="fa fa-search"></i>
@@ -79,10 +77,10 @@
 									<a href="#"> Register</a>
 								</div>
 							</div>
-							<a href="#" class="widget-header pl-3 ml-3">
+							<a href="{%url 'cart'%}" class="widget-header pl-3 ml-3">
 								<div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i>
 								</div>
-								<span class="badge badge-pill badge-danger notify">0</span>
+								<span class="badge badge-pill badge-danger notify">{{count}}</span>
 							</a>
 						</div> <!-- widgets-wrap.// -->
 					</div> <!-- col.// -->
