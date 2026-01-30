@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&33#8(vmp18(2-vym^_@#_lsz($i^pg!z4-36*tha659_#znx!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'cart',
+    'crispy_forms',
+    'crispy_bootstrap4'
 ]
 
 MIDDLEWARE = [
@@ -130,4 +132,24 @@ STATICFILES_DIRS=[
 MEDIA_URL = 'media/'
 MEDIA_ROOT=BASE_DIR/'media'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK='bootstrap4'
 
+from django.contrib.messages import constants as messages
+
+
+# for django messages framework:
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-secondary",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
+}
+
+# SMTP
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER='vangalaudaykiranreddy@gmail.com'
+EMAIL_HOST_PASSWORD='vant pcgg adma srga'
+EMAIL_USE_TLS=True

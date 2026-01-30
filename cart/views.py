@@ -8,12 +8,13 @@ def _cart_id(request):
     cart_id=request.session.session_key
     
     if not cart_id:
-        cart_id=request.session.create
+        cart_id=request.session.create()
     return cart_id
     
 def add_cart(request,product_id):
     
     product=get_object_or_404(Product,id=product_id)
+    
     product_variations=[]
     
     if request.method=='POST':
@@ -26,12 +27,15 @@ def add_cart(request,product_id):
                 product_variations.append(varition)
             except Variation.DoesNotExist:
                 pass
+    
                  
     try:
         cart=Cart.objects.get(cart_id=_cart_id(request))
     except Cart.DoesNotExist:
         cart=Cart.objects.create(cart_id=_cart_id(request))
         cart.save()
+        
+    print(cart)
         
     # cart_item_exists=CartItem.objects.filter(product=product,cart=cart).exists()
     # if cart_item_exists:
