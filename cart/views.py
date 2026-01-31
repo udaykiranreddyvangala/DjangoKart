@@ -2,6 +2,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.http import  HttpResponse
 from store.models import Product,Variation
 from .models import Cart,CartItem
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def _cart_id(request):
@@ -27,28 +28,30 @@ def add_cart(request,product_id):
                 product_variations.append(varition)
             except Variation.DoesNotExist:
                 pass
-    
-                 
-    try:
-        cart=Cart.objects.get(cart_id=_cart_id(request))
-    except Cart.DoesNotExist:
-        cart=Cart.objects.create(cart_id=_cart_id(request))
-        cart.save()
-        
-    print(cart)
-        
+
+    cart_items=None
+    if request.user.is_authenticated:
+        cart_items=CartItem.objects.filter(product=product,user=request.user)
+    else:            
+        try:
+            cart=Cart.objects.get(cart_id=_cart_id(request))
+            cart_items=CartItem.objects.filter(product=product,cart=cart)
+        except Cart.DoesNotExist:
+            cart=Cart.objects.create(cart_id=_cart_id(request))
+            cart.save()
+                    
     # cart_item_exists=CartItem.objects.filter(product=product,cart=cart).exists()
     # if cart_item_exists:
-    cart_items=CartItem.objects.filter(product=product,cart=cart)
         
     existing_variations=[]
     cart_item_id=[]
     
-    for cart_item in cart_items:
-        curr_variations=list(cart_item.variations.all())
-        # curr_variations.sort()
-        existing_variations.append(curr_variations)
-        cart_item_id.append(cart_item.id)
+    if cart_items:
+        for cart_item in cart_items:
+            curr_variations=list(cart_item.variations.all())
+            # curr_variations.sort()
+            existing_variations.append(curr_variations)
+            cart_item_id.append(cart_item.id)
     
     if product_variations in existing_variations:
         index=existing_variations.index(product_variations)
@@ -57,13 +60,12 @@ def add_cart(request,product_id):
         cart_item.quantity+=1
         cart_item.save()
     else:
-        cart_item=CartItem.objects.create(
-        product=product,
-        cart=cart,
-        quantity=1
-    )    
-    cart_item.variations.set(product_variations)
-    cart_item.save()
+        if request.user.is_authenticated:
+            cart_item=CartItem.objects.create(product=product,user=request.user,quantity=1)   
+        else:
+            cart_item=CartItem.objects.create(product=product,cart=cart,quantity=1)    
+        cart_item.variations.set(product_variations)
+        cart_item.save()
     
     # else:
     #     cart_item=CartItem.objects.create(
@@ -101,8 +103,11 @@ def remove_cart_item(request,cart_item_id):
 def cart(request,total=0,grand_total=0,quantity=0,tax=0,cart_items=None):
     
     try:
-        cart=Cart.objects.get(cart_id=_cart_id(request))
-        cart_items=CartItem.objects.filter(cart=cart,is_active=True)
+        if request.user.is_authenticated:
+            cart_items=CartItem.objects.filter(user=request.user,is_active=True)
+        else:
+            cart=Cart.objects.get(cart_id=_cart_id(request))
+            cart_items=CartItem.objects.filter(cart=cart,is_active=True)
         for cart_item in cart_items:
             total+=(cart_item.quantity*cart_item.product.price)
             quantity+=cart_item.quantity
@@ -119,3 +124,20 @@ def cart(request,total=0,grand_total=0,quantity=0,tax=0,cart_items=None):
         'cart_items':cart_items,
     }
     return render(request,'cart.html',context)
+
+@login_required(login_url='login')
+def checkout(request):
+    cart_items=None
+    if request.user.is_authenticated:
+        cart_items=CartItem.objects.filter(user=request.user,is_active=True)
+    else:
+        try:
+            cart=Cart.objects.get(cart_id=_cart_id(request))
+            cart_items=CartItem.objects.filter(cart=cart,is_active=True)
+        except Cart.DoesNotExist:
+            pass
+    
+    context={
+        'cart_items':cart_items,
+    } 
+    return render(request,'checkout.html',context)
