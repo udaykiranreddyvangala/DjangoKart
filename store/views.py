@@ -35,3 +35,4 @@ def product_detail(request,slug):
     }
     
     return render(request,'product_detail.html',context)
+
