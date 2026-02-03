@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Product,reviewRating
+from .models import Product,reviewRating,ProductGallery
 from cart.models import Cart,CartItem
 from cart.views import _cart_id
 from django.core.paginator import EmptyPage,PageNotAnInteger,Paginator
@@ -33,23 +33,28 @@ def store(request,slug=None):
 def product_detail(request,slug):
     product=Product.objects.get(slug=slug)
     is_purchased=False
-    order_products=OrderProduct.objects.filter(user=request.user)
+    try:
+        order_products=OrderProduct.objects.filter(user=request.user)
+    except:
+        order_products=None
     reviews=reviewRating.objects.filter(product=product,status=True)
     reviews_count=reviews.count()
     average_rating = reviews.aggregate(Avg('rating'))['rating__avg']
     if average_rating:
         product.averageReview=average_rating
         product.save()  
-    
-    for order_product in order_products:
-        if order_product.product==product:
-            is_purchased=True
-            break
+        
+    if order_products:
+        for order_product in order_products:
+            if order_product.product==product:
+                is_purchased=True
+                break
             
-    
     in_cart=CartItem.objects.filter(cart__cart_id=_cart_id(request),product=product).exists()
+    product_gallery=ProductGallery.objects.filter(product=product)
     form=reviewRatingForm()
     context={
+        'product_gallery':product_gallery,
         'reviews_count':reviews_count,
         'product':product,
         'reviews':reviews,

@@ -10,9 +10,20 @@
             <div class="row no-gutters">
                 <aside class="col-md-6">
                     <article class="gallery-wrap">
-                        <div class="img-big-wrap">
-                            <a href="#"><img src="{{product.images.url}}"></a>
+                        <div class="img-big-wrap mainImage">
+                            <center><img src="{{product.images.url}}"></center>
                         </div> <!-- img-big-wrap.// -->
+
+                        <div>
+                            <ul class="thumb">
+                                <li><a href="{{product.images.url}}" target="mainImage"><img src="{{product.images.url}}"
+                                            alt="product image"></a></li>
+                                {%for image in product_gallery%}
+                                <li><a href="{{image.image.url}}" target="mainImage"><img src="{{image.image.url}}"
+                                            alt="product image"></a></li>
+                                {%endfor%}
+                            </ul>
+                        </div>
 
                     </article> <!-- gallery-wrap .end// -->
                 </aside>
